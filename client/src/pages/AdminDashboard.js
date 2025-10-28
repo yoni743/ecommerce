@@ -12,6 +12,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     fetchOrders();
     fetchStats();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedStatus, currentPage]);
 
   const fetchOrders = async () => {
