@@ -45,7 +45,7 @@ const Checkout = () => {
         paymentMethod: formData.paymentMethod
       };
 
-      const response = await axios.post('/api/orders', orderData);
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/orders`, orderData);
       clearCart();
       navigate(`/orders/${response.data._id}`);
     } catch (error) {

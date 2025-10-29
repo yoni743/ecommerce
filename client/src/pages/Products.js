@@ -27,7 +27,7 @@ const Products = () => {
       if (searchTerm) params.append('search', searchTerm);
       params.append('page', currentPage);
 
-      const response = await axios.get(`/api/products?${params}`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/products?${params}`);
       setProducts(response.data.products);
       setTotalPages(response.data.totalPages);
     } catch (error) {
@@ -39,7 +39,7 @@ const Products = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get('/api/products/categories');
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/products/categories`);
       setCategories(response.data);
     } catch (error) {
       console.error('Error fetching categories:', error);

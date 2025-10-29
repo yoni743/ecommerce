@@ -22,7 +22,7 @@ const AdminDashboard = () => {
       if (selectedStatus) params.append('status', selectedStatus);
       params.append('page', currentPage);
 
-      const response = await axios.get(`/api/orders/admin/all?${params}`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/orders/admin/all?${params}`);
       setOrders(response.data.orders);
       setTotalPages(response.data.totalPages);
     } catch (error) {
@@ -34,7 +34,7 @@ const AdminDashboard = () => {
 
   const fetchStats = async () => {
     try {
-      const response = await axios.get('/api/users/stats');
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/users/stats`);
       setStats(response.data);
     } catch (error) {
       console.error('Error fetching stats:', error);
@@ -43,7 +43,7 @@ const AdminDashboard = () => {
 
   const updateOrderStatus = async (orderId, status) => {
     try {
-      await axios.put(`/api/orders/${orderId}/status`, { status });
+      await axios.put(`${process.env.REACT_APP_API_URL}/api/orders/${orderId}/status`, { status });
       fetchOrders();
     } catch (error) {
       console.error('Error updating order status:', error);
