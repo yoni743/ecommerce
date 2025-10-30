@@ -16,11 +16,23 @@ const userRoutes = require('./routes/users');
 const app = express();
 
 // Middleware
-const allowedOrigin = process.env.ALLOWED_ORIGIN || '*';
+const allowedOrigins = [
+  'https://tubular-cannoli-380678.netlify.app',
+  'http://localhost:3000'
+];
+
 app.use(cors({
-  origin: allowedOrigin === '*' ? true : allowedOrigin,
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin || allowedOrigins.includes(origin.replace(/\/$/, ''))) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
