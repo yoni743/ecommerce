@@ -43,6 +43,20 @@ router.get('/', async (req, res) => {
   }
 });
 
+// ✅ FIX: categories route must come before /:id
+// @route   GET /api/products/categories
+// @desc    Get all categories
+// @access  Public
+router.get('/categories', async (req, res) => {
+  try {
+    const categories = await Product.distinct('category');
+    res.json(categories);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 // @route   GET /api/products/:id
 // @desc    Get single product
 // @access  Public
@@ -121,19 +135,6 @@ router.delete('/:id', [auth, adminAuth], async (req, res) => {
     }
 
     res.json({ message: 'Product deleted successfully' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
-  }
-});
-
-// @route   GET /api/products/categories
-// @desc    Get all categories
-// @access  Public
-router.get('/categories', async (req, res) => {
-  try {
-    const categories = await Product.distinct('category');
-    res.json(categories);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
