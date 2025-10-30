@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import axios from 'axios';
+import API from '../api/axios';
 
 const AuthContext = createContext();
 
@@ -45,12 +45,14 @@ export const AuthProvider = ({ children }) => {
     loading: true
   });
 
-  // Set axios default header
+  // Set auth header on shared API instance
   useEffect(() => {
     if (state.token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${state.token}`;
+      API.defaults.headers.common['Authorization'] = `Bearer ${state.token}`;
     } else {
-      delete axios.defaults.headers.common['Authorization'];
+      if (API.defaults.headers && API.defaults.headers.common) {
+        delete API.defaults.headers.common['Authorization'];
+      }
     }
   }, [state.token]);
 
@@ -59,7 +61,7 @@ export const AuthProvider = ({ children }) => {
     const loadUser = async () => {
       if (state.token) {
         try {
-          const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/auth/me`);
+          const res = await API.get('/api/auth/me');
           dispatch({
             type: 'LOGIN_SUCCESS',
             payload: {
@@ -80,7 +82,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/login`, { email, password });
+      const res = await API.post('/api/auth/login', { email, password });
       const { token, user } = res.data;
       
       localStorage.setItem('token', token);
@@ -100,7 +102,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (name, email, password) => {
     try {
-      const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/register`, { name, email, password });
+      const res = await API.post('/api/auth/register', { name, email, password });
       const { token, user } = res.data;
       
       localStorage.setItem('token', token);
@@ -125,7 +127,7 @@ export const AuthProvider = ({ children }) => {
 
   const updateProfile = async (profileData) => {
     try {
-      const res = await axios.put(`${process.env.REACT_APP_API_URL}/api/users/profile`, profileData);
+      const res = await API.put('/api/users/profile', profileData);
       dispatch({
         type: 'UPDATE_USER',
         payload: res.data

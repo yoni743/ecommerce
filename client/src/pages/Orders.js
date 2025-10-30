@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import API from '../api/axios';
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -13,7 +13,7 @@ const Orders = () => {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/orders`);
+      const response = await API.get('/api/orders');
       setOrders(response.data);
     } catch (error) {
       console.error('Error fetching orders:', error);
