@@ -27,11 +27,15 @@ const Products = () => {
       if (searchTerm) params.append('search', searchTerm);
       params.append('page', currentPage);
 
-      const response = await API.get(`/api/products?${params}`);
-      setProducts(response.data.products);
-      setTotalPages(response.data.totalPages);
+      // ✅ FIXED: make sure the params string is correct
+      const query = params.toString();
+      const response = await API.get(`/api/products${query ? `?${query}` : ''}`);
+      
+      setProducts(response.data.products || []);
+      setTotalPages(response.data.totalPages || 1);
     } catch (error) {
-      console.error('Error fetching products:', error);
+      console.error('❌ Error fetching products:', error);
+      setProducts([]);
     } finally {
       setLoading(false);
     }
@@ -40,9 +44,9 @@ const Products = () => {
   const fetchCategories = async () => {
     try {
       const response = await API.get('/api/products/categories');
-      setCategories(response.data);
+      setCategories(response.data || []);
     } catch (error) {
-      console.error('Error fetching categories:', error);
+      console.error('❌ Error fetching categories:', error);
     }
   };
 
@@ -68,7 +72,7 @@ const Products = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-4">Products</h1>
-        
+
         {/* Search and Filter */}
         <div className="flex flex-col md:flex-row gap-4 mb-6">
           <form onSubmit={handleSearch} className="flex-1">
@@ -85,7 +89,12 @@ const Products = () => {
                 className="absolute right-2 top-2 p-1 text-gray-400 hover:text-gray-600"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
                 </svg>
               </button>
             </div>
@@ -118,7 +127,10 @@ const Products = () => {
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {products.map((product) => (
-              <div key={product._id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300">
+              <div
+                key={product._id}
+                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300"
+              >
                 <Link to={`/products/${product._id}`}>
                   <img
                     src={product.image}
