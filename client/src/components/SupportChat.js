@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 
 const WEBHOOK_URL = process.env.REACT_APP_SUPPORT_CHAT_WEBHOOK;
 
@@ -20,18 +19,24 @@ const SupportChat = () => {
     setLoading(true);
 
     try {
-      const res = await axios.post(WEBHOOK_URL, {
-        chatInput: userMessage.text,
+      const response = await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          chatInput: userMessage.text,
+        }),
       });
 
-      const botReply =
-        typeof res.data === 'string'
-          ? res.data
-          : res.data.text || 'Sorry, I could not understand that.';
+      const data = await response.json();
 
-      setMessages((prev) => [...prev, { from: 'bot', text: botReply }]);
-    } catch (err) {
-      console.error(err);
+      setMessages((prev) => [
+        ...prev,
+        { from: 'bot', text: data.text || 'No reply from support.' }
+      ]);
+    } catch (error) {
+      console.error(error);
       setMessages((prev) => [
         ...prev,
         { from: 'bot', text: '❌ Support is currently unavailable.' }
@@ -43,7 +48,7 @@ const SupportChat = () => {
 
   return (
     <>
-      {/* Floating Button */}
+      {/* Floating Chat Button */}
       <button
         onClick={() => setOpen(!open)}
         style={{
@@ -63,7 +68,7 @@ const SupportChat = () => {
         💬
       </button>
 
-      {/* Chat Box */}
+      {/* Chat Window */}
       {open && (
         <div
           style={{
@@ -80,11 +85,23 @@ const SupportChat = () => {
             zIndex: 9999
           }}
         >
-          <div style={{ padding: 10, background: '#ffc107', fontWeight: 'bold' }}>
+          <div
+            style={{
+              padding: 10,
+              background: '#ffc107',
+              fontWeight: 'bold'
+            }}
+          >
             Customer Support
           </div>
 
-          <div style={{ flex: 1, padding: 10, overflowY: 'auto' }}>
+          <div
+            style={{
+              flex: 1,
+              padding: 10,
+              overflowY: 'auto'
+            }}
+          >
             {messages.map((msg, i) => (
               <div
                 key={i}
