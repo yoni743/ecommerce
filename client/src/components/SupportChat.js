@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import API from '../api/axios';
+import axios from 'axios';
+
+const WEBHOOK_URL = process.env.REACT_APP_SUPPORT_CHAT_WEBHOOK;
 
 const SupportChat = () => {
   const [open, setOpen] = useState(false);
@@ -18,12 +20,9 @@ const SupportChat = () => {
     setLoading(true);
 
     try {
-      const res = await API.post(
-        'https://programming0595.app.n8n.cloud/webhook/cf311870-e2c7-4e19-8c46-880faaaddf46/chat',
-        {
-          chatInput: userMessage.text
-        }
-      );
+      const res = await axios.post(WEBHOOK_URL, {
+        chatInput: userMessage.text,
+      });
 
       const botReply =
         typeof res.data === 'string'
@@ -32,6 +31,7 @@ const SupportChat = () => {
 
       setMessages((prev) => [...prev, { from: 'bot', text: botReply }]);
     } catch (err) {
+      console.error(err);
       setMessages((prev) => [
         ...prev,
         { from: 'bot', text: '❌ Support is currently unavailable.' }
@@ -80,23 +80,11 @@ const SupportChat = () => {
             zIndex: 9999
           }}
         >
-          <div
-            style={{
-              padding: 10,
-              background: '#ffc107',
-              fontWeight: 'bold'
-            }}
-          >
+          <div style={{ padding: 10, background: '#ffc107', fontWeight: 'bold' }}>
             Customer Support
           </div>
 
-          <div
-            style={{
-              flex: 1,
-              padding: 10,
-              overflowY: 'auto'
-            }}
-          >
+          <div style={{ flex: 1, padding: 10, overflowY: 'auto' }}>
             {messages.map((msg, i) => (
               <div
                 key={i}
@@ -110,8 +98,7 @@ const SupportChat = () => {
                     display: 'inline-block',
                     padding: '6px 10px',
                     borderRadius: 8,
-                    background:
-                      msg.from === 'user' ? '#007bff' : '#f1f1f1',
+                    background: msg.from === 'user' ? '#007bff' : '#f1f1f1',
                     color: msg.from === 'user' ? '#fff' : '#000'
                   }}
                 >
