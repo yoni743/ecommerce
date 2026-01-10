@@ -15,6 +15,7 @@ import Orders from './pages/Orders';
 import AdminDashboard from './pages/AdminDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
+import SupportChat from './components/SupportChat';
 
 function App() {
   return (
@@ -57,6 +58,7 @@ function App() {
                 } />
               </Routes>
             </main>
+            <SupportChat />
           </div>
         </Router>
       </CartProvider>
